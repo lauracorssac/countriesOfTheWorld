@@ -29,10 +29,10 @@ class NameConverter:
         return output
 
     # conerts to the format presented to the user
-    def convert_to_display_name(countryname):
+    def convert_to_display_name(country_name):
 
         output = ""
-        components = re.split("_", countryName)
+        components = re.split("_", country_name)
         for component in components:
             output += component.capitalize() + " "
         

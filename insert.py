@@ -40,8 +40,6 @@ def insert_drinks():
         except exc.IntegrityError:
             db.session.rollback()
             new_info = getCountryNoForeignKey(info)
-            print("ON EXCEPTIOOOOOOOOOOOOOOOOOOOOOON")
-            print(info)
             db.session.add(new_info)
             db.session.commit()
 
