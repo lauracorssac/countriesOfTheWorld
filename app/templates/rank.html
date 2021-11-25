@@ -22,18 +22,24 @@
     <body>
         <form method="GET" action="/ranking/">
             <select class="inline-block-child" name= "chosen_criteria">
-                {% for chosen_criteria in criterias %}
-                    <option value="{{chosen_criteria}}">{{chosen_criteria}}</option>"
+                {% for criteria in criterias %}
+                    <option value="{{criteria.query_name}}">{{criteria.display_name}}</option>
                 {% endfor %}
             </select>
             <select class="inline-block-child" name="order">
                 {% for order in orders %}
-                    <option value="{{order}}">{{order}}</option>"
+                    <option value="{{order.query_name}}">{{order.display_name}}</option>
                 {% endfor %}
             </select>
+            <select class="inline-block-child" name="filter">
+                {% for filter in filters %}
+                    <option value="{{filter.query_name}}">{{filter.display_name}}</option>
+                {% endfor %}
+            </select>
+            <label class="inline-block-child" for="limit">Show Only:</label>
+            <input class="inline-block-child" id="limit" type="text" name="limit">
             <input class="inline-block-child" type="submit">
-        </div>
-        
+        </form> 
         <table style="width:100%">
             {% for country in countries %}
             <tr>

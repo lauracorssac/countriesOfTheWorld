@@ -2,10 +2,10 @@ from app import app
 from flask import render_template
 from flask import request
 from app.JsonManager import JsonManager
-from app.models import User
 from app.JsonManager import JsonManager
 from app.NameConverter import NameConverter
 from app.GhapicManager import GraphicManager
+from app.SelectionOptionsManager import SelectionOptionsManager
 
 @app.route('/')
 @app.route('/index')
@@ -17,16 +17,9 @@ def countries_list():
     return render_template(
         'rank.html', 
         countries=map(convertJSONToPresentation,countries), 
-        criterias=[
-            'wine_servings', 
-            'beer_servings', 
-            'spirit_servings', 
-            'total_litres_of_pure_alcohol',
-            'gpd_capita',
-            'population',
-            'area'
-        ],
-        orders=['ASC', 'DESC']
+        criterias= SelectionOptionsManager.get_criterias(),
+        orders= SelectionOptionsManager.get_options(),
+        filters= SelectionOptionsManager.get_filters()
     )
 
 @app.route('/alcohol_area/<country_name>/<alcohol_type>')
@@ -91,7 +84,13 @@ def rank_countries():
 
     results = JsonManager.rank_countries(criteria, order, limit, filter)
     results = map(convertJSONToPresentation, results)
-    return render_template('rank.html', countries= results)
+    return render_template(
+        'rank.html', 
+        countries= results,
+        criterias= SelectionOptionsManager.get_criterias(),
+        orders= SelectionOptionsManager.get_options(),
+        filters= SelectionOptionsManager.get_filters()
+    )
 
 @app.route('/correlation/<criteria1>/<criteria2>')
 def get_correlation(criteria1, criteria2):

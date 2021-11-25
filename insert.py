@@ -1,17 +1,9 @@
 from app import db
-from app.models import User, CountryDrinksInfo, Countries
+from app.models import CountryDrinksInfo, Countries
 import csv
 from app.NameConverter import NameConverter
 from sqlalchemy import exc
 
-
-# u = User(username='laura', email='la@example.com')
-# db.session.add(u)
-# db.session.commit()
-
-# users = User.query.all()
-# for u in users:
-#     print(u.id, u.username, u.email)
 
 def insert_drinks():
 
