@@ -67,25 +67,25 @@ class JsonManager:
         
         return result_json
     
-    def get_filter_statement(filter, criteria):
+    def get_filter_statement(filter, criteria, table):
         
-        empty_statement = "WHERE {{criteria}} {{operator}} AVG({{criteria}})"
+        empty_statement = "WHERE {criteria} {operator} (SELECT AVG({criteria}) FROM {table})\n"
         if filter == "all":
             return ""
         if filter == "gt_avg":
-            return empty_statement.format(criteria=criteria, operator=">")
+            return empty_statement.format(criteria=criteria, operator=">", table=table)
         if filter == "lt_avg":
-            return empty_statement.format(criteria=criteria, operator="<")
+            return empty_statement.format(criteria=criteria, operator="<", table=table)
         if filter == "gte_avg":
-            return empty_statement.format(criteria=criteria, operator=">=")
+            return empty_statement.format(criteria=criteria, operator=">=", table=table)
         if filter == "lte_avg":
-            return empty_statement.format(criteria=criteria, operator="<=")
+            return empty_statement.format(criteria=criteria, operator="<=", table=table)
         if filter == "eq_avg":
-            return empty_statement.format(criteria=criteria, operator="==")
+            return empty_statement.format(criteria=criteria, operator="==", table=table)
         else:
             return ""
 
-    def get_from_statement(criteria):
+    def get_table_name(criteria):
         if (criteria == "wine_servings" or 
         criteria == "beer_servings" or 
         criteria == "spirit_servings" or 
@@ -113,16 +113,16 @@ class JsonManager:
     # filter: all, gt_avg, gte_avg, lt_avg, lte_avg, eq_avg
     def rank_countries(criteria, order, limit, filter):
         
-        from_statement = JsonManager.get_from_statement(criteria)
-        if not from_statement:
+        table_name = JsonManager.get_table_name(criteria)
+        if not table_name:
             return []
 
         order_statement = f"ORDER BY {criteria} {order}" if order else "ORDER BY country_name"
         limit_statement = JsonManager.get_limit_statement(limit)
-        filter_statement = JsonManager.get_filter_statement(filter, criteria)
+        filter_statement = JsonManager.get_filter_statement(filter, criteria, table_name)
 
         query = f"""
-        SELECT ROW_NUMBER() OVER(ORDER BY {criteria} {order}), country_name, {criteria} FROM {from_statement}
+        SELECT ROW_NUMBER() OVER(ORDER BY {criteria} {order}), country_name, {criteria} FROM {table_name}
         {filter_statement}
         {order_statement}
         {limit_statement}
@@ -137,6 +137,31 @@ class JsonManager:
                     'order_index': result[0],
                     'country_name': result[1],
                     'criteria': result[2]
+                }
+            )
+        return output_json
+
+    def get_two_criteria_all_countries(criteria1, criteria2):
+        
+        table1 = JsonManager.get_table_name(criteria1)
+        table2 = JsonManager.get_table_name(criteria2)
+        if not table1 or not table2:
+            return []
+
+        query = f"""
+        SELECT countries.country_name, {table1}.{criteria1}, {table2}.{criteria2} FROM country_drinks_info
+        INNER JOIN countries
+        ON countries.country_name = country_drinks_info.country_id
+        """
+
+        results = db.engine.execute(query)
+        output_json = []
+        for result in results:
+            output_json.append(
+                {
+                    'country_name': result[0],
+                    'criteria1': result[1],
+                    'criteria2': result[2]
                 }
             )
         return output_json

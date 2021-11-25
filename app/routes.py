@@ -4,9 +4,8 @@ from app.JsonManager import JsonManager
 from app.models import User
 from app.JsonManager import JsonManager
 from app.NameConverter import NameConverter
+from app.GhapicManager import GraphicManager
 
-@app.route('/')
-@app.route('/index')
 def index():
     user = {'username': 'Miguel'}
 
@@ -16,6 +15,8 @@ def index():
     
     return render_template('home.html', title='Home', user=user)
 
+@app.route('/')
+@app.route('/index')
 @app.route('/list')
 def countries_list():
 
@@ -72,21 +73,33 @@ def convertJSONToPresentation(jsonItem):
         'criteria': "{criteria: .2f}".format(criteria= jsonItem["criteria"])
     }
 
-@app.route('/ranking/<criteria>/<order>')
-def rank_countries(criteria, order):
-    results = JsonManager.rank_countries(criteria, order, "none", "all")
-    results = map(convertJSONToPresentation, results)
-    return render_template('rank.html', countries= results)
-
-@app.route('/ranking/<criteria>/<order>/<limit>')
-def rank_and_select_countries(criteria, order, limit):
-    results = JsonManager.rank_countries(criteria, order, limit, "all")
-    results = map(convertJSONToPresentation, results)
-    return render_template('rank.html', countries= results)
-
+@app.route('/ranking/<criteria>/<order>', defaults={'limit': "none", 'filter': 'all'})
+@app.route('/ranking/<criteria>/<order>/<limit>', defaults={'filter': "all"})
 @app.route('/ranking/<criteria>/<order>/<limit>/<filter>')
-def rank_and_filter_countries(criteria, order, limit, filter):
+def rank_countries(criteria, order, limit, filter):
     results = JsonManager.rank_countries(criteria, order, limit, filter)
     results = map(convertJSONToPresentation, results)
     return render_template('rank.html', countries= results)
-        
+
+@app.route('/correlation/<criteria1>/<criteria2>')
+def get_correlation(criteria1, criteria2):
+    
+    results = JsonManager.get_two_criteria_all_countries(criteria1, criteria2)
+    
+    vector1 = []
+    vector2 = []
+
+    for result in results:
+        vector1.append(result["criteria1"])
+        vector2.append(result["criteria2"])
+
+    image_url = f"/app/images/correlation_{criteria1}_{criteria2}.png"
+    pngImageB64String = GraphicManager.correlate(vector1, vector2, image_url, criteria1, criteria2)
+    criteria1_title = NameConverter.convert_to_display_name(criteria1)
+    criteria2_title = NameConverter.convert_to_display_name(criteria2)
+
+    return render_template(
+        'correlation.html', 
+        title= f"Correlation between {criteria1_title} and {criteria2_title}", 
+        image= pngImageB64String
+    )
