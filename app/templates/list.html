@@ -5,7 +5,9 @@
     </head>
     <body>
         {% for country in countries %}
-        <div><h3>{{ country.country_name }}</h3></div>
+        <a href="/info/{{country.country_route}}">
+            <div><h3>{{ country.country_name }}</h3></div>
+        </a>
         {% endfor %}
     </body>
 </html>
