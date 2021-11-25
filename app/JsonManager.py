@@ -10,13 +10,24 @@ class JsonManager:
 
     def get_country_name_list():
         query = """
-        SELECT country_name FROM countries
-        UNION
-        SELECT country_name FROM country_drinks_info
+        SELECT ROW_NUMBER() OVER(ORDER BY country_name), country_name FROM
+        (
+            SELECT country_name FROM countries
+            UNION
+            SELECT country_name FROM country_drinks_info
+        ) AS subquery
         ORDER BY country_name
         """
-        country_names = db.engine.execute(query)
-        return country_names
+        results = db.engine.execute(query)
+        output_json = []
+        for result in results:
+            output_json.append(
+                {
+                    'order_index': result[0],
+                    'country_name': result[1],
+                }
+            )
+        return output_json
 
     # {alcoholType}_doses * population / area
     def get_alcohol_per_area(country_name, alcohol_type):

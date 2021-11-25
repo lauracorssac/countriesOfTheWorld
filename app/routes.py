@@ -20,18 +20,9 @@ def index():
 @app.route('/list')
 def countries_list():
 
-    countries=[]
-    country_names = JsonManager.get_country_name_list()
-    for country_name in country_names:
-        name = country_name[0]
-        countries.append(
-            {
-                'country_name': NameConverter.convert_to_display_name(name),
-                'country_route': name
-            }
-        )
+    countries = JsonManager.get_country_name_list()
 
-    return render_template('list.html', countries=countries)
+    return render_template('rank.html', countries=map(convertJSONToPresentation,countries))
 
 @app.route('/alcohol_area/<country_name>/<alcohol_type>')
 def alcohol_area(country_name, alcohol_type):
@@ -65,12 +56,12 @@ def country_info(country_name):
         gpd = results["gpd_capita"]
     )
 
-def convertJSONToPresentation(jsonItem):
+def convertJSONToPresentation(jsonItem, criteria=None):
     return {
         'order_index': jsonItem['order_index'],
         'country_name': NameConverter.convert_to_display_name(jsonItem["country_name"]),
         'country_route': jsonItem["country_name"],
-        'criteria': "{criteria: .2f}".format(criteria= jsonItem["criteria"])
+        'criteria': "{criteria: .2f}".format(criteria= jsonItem["criteria"]) if criteria else ""
     }
 
 @app.route('/ranking/<criteria>/<order>', defaults={'limit': "none", 'filter': 'all'})

@@ -25,8 +25,3 @@ class GraphicManager:
         pngImageB64String = "data:image/png;base64,"
         pngImageB64String += base64.b64encode(pngImage.getvalue()).decode('utf8')
         return pngImageB64String
-
-        # pyplot.scatter(vectorX, vectorY)
-        # pyplot.savefig(figure_url)
-        # pyplot.xlabel(labelX)
-        # pyplot.ylabel(labelY)
