@@ -88,7 +88,7 @@ class JsonManager:
     def get_from_statement(criteria):
         if (criteria == "wine_servings" or 
         criteria == "beer_servings" or 
-        criteria == "spit_servings" or 
+        criteria == "spirit_servings" or 
         criteria == "total_litres_of_pure_alcohol"):
             return "country_drinks_info"
         if (criteria == "gpd_capita" or 
@@ -122,7 +122,7 @@ class JsonManager:
         filter_statement = JsonManager.get_filter_statement(filter, criteria)
 
         query = f"""
-        SELECT country_name, {criteria} FROM {from_statement}
+        SELECT ROW_NUMBER() OVER(ORDER BY {criteria} {order}), country_name, {criteria} FROM {from_statement}
         {filter_statement}
         {order_statement}
         {limit_statement}
@@ -134,8 +134,9 @@ class JsonManager:
         for result in results:
             output_json.append(
                 {
-                    'country_name': result[0],
-                    'criteria': result[1]
+                    'order_index': result[0],
+                    'country_name': result[1],
+                    'criteria': result[2]
                 }
             )
         return output_json

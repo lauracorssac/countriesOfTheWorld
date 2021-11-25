@@ -66,6 +66,7 @@ def country_info(country_name):
 
 def convertJSONToPresentation(jsonItem):
     return {
+        'order_index': jsonItem['order_index'],
         'country_name': NameConverter.convert_to_display_name(jsonItem["country_name"]),
         'country_route': jsonItem["country_name"],
         'criteria': "{criteria: .2f}".format(criteria= jsonItem["criteria"])

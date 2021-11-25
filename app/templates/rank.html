@@ -16,6 +16,7 @@
             {% for country in countries %}
             <tr>
                 <td>
+                    <p class="inline-block-child"> {{country.order_index}} </p>
                     <a class='inline-block-child' href="/info/{{country.country_route}}">
                         <h3>{{ country.country_name }}</h3>
                     </a>
