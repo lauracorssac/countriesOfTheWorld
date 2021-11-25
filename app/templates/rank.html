@@ -12,11 +12,28 @@
         a {
             color: black;
         }
+        h1 {
+            text-align: center;
+        }
     </style>
     <head>
         <h1> Countries of the World </h1>
     </head>
     <body>
+        <form method="GET" action="/ranking/">
+            <select class="inline-block-child" name= "chosen_criteria">
+                {% for chosen_criteria in criterias %}
+                    <option value="{{chosen_criteria}}">{{chosen_criteria}}</option>"
+                {% endfor %}
+            </select>
+            <select class="inline-block-child" name="order">
+                {% for order in orders %}
+                    <option value="{{order}}">{{order}}</option>"
+                {% endfor %}
+            </select>
+            <input class="inline-block-child" type="submit">
+        </div>
+        
         <table style="width:100%">
             {% for country in countries %}
             <tr>
@@ -26,7 +43,7 @@
                         <h3>{{ country.country_name }}</h3>
                     </a>
                     <p class='inline-block-child'>
-                        {{country.criteria}}
+                        {{country.criteria_ranked}}
                     </p>
                 </td>
             </tr>

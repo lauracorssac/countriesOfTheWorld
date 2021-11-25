@@ -1,19 +1,11 @@
 from app import app
 from flask import render_template
+from flask import request
 from app.JsonManager import JsonManager
 from app.models import User
 from app.JsonManager import JsonManager
 from app.NameConverter import NameConverter
 from app.GhapicManager import GraphicManager
-
-def index():
-    user = {'username': 'Miguel'}
-
-    users = User.query.all()
-    for u in users:
-        print(u.id, u.username, u.email)
-    
-    return render_template('home.html', title='Home', user=user)
 
 @app.route('/')
 @app.route('/index')
@@ -22,7 +14,20 @@ def countries_list():
 
     countries = JsonManager.get_country_name_list()
 
-    return render_template('rank.html', countries=map(convertJSONToPresentation,countries))
+    return render_template(
+        'rank.html', 
+        countries=map(convertJSONToPresentation,countries), 
+        criterias=[
+            'wine_servings', 
+            'beer_servings', 
+            'spirit_servings', 
+            'total_litres_of_pure_alcohol',
+            'gpd_capita',
+            'population',
+            'area'
+        ],
+        orders=['ASC', 'DESC']
+    )
 
 @app.route('/alcohol_area/<country_name>/<alcohol_type>')
 def alcohol_area(country_name, alcohol_type):
@@ -56,18 +61,34 @@ def country_info(country_name):
         gpd = results["gpd_capita"]
     )
 
-def convertJSONToPresentation(jsonItem, criteria=None):
+def convertJSONToPresentation(jsonItem):
     return {
         'order_index': jsonItem['order_index'],
         'country_name': NameConverter.convert_to_display_name(jsonItem["country_name"]),
         'country_route': jsonItem["country_name"],
-        'criteria': "{criteria: .2f}".format(criteria= jsonItem["criteria"]) if criteria else ""
+        'criteria_ranked': "{criteria: .2f}".format(criteria= jsonItem["criteria"]) if "criteria" in jsonItem else ""
     }
 
-@app.route('/ranking/<criteria>/<order>', defaults={'limit': "none", 'filter': 'all'})
-@app.route('/ranking/<criteria>/<order>/<limit>', defaults={'filter': "all"})
-@app.route('/ranking/<criteria>/<order>/<limit>/<filter>')
-def rank_countries(criteria, order, limit, filter):
+@app.route('/ranking/')
+# @app.route('/ranking/<criteria>/', defaults={'order':'ASC', 'limit': "none", 'filter': 'all'})
+# @app.route('/ranking/<criteria>/<order>', defaults={'limit': "none", 'filter': 'all'})
+# @app.route('/ranking/<criteria>/<order>/<limit>', defaults={'filter': "all"})
+# @app.route('/ranking/<criteria>/<order>/<limit>/<filter>')
+def rank_countries():
+
+    criteria_arg = request.args.get('chosen_criteria')
+    order_arg = request.args.get('order')
+    limit_arg = request.args.get('limit')
+    filter_arg = request.args.get('filter')
+
+    if not criteria_arg:
+        return
+
+    criteria = criteria_arg
+    order = order_arg if order_arg is not None else "ASC"
+    filter = filter_arg if filter_arg is not None else "all"
+    limit = limit_arg if limit_arg is not None else "none"
+
     results = JsonManager.rank_countries(criteria, order, limit, filter)
     results = map(convertJSONToPresentation, results)
     return render_template('rank.html', countries= results)

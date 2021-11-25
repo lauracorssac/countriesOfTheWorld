@@ -119,7 +119,7 @@ class JsonManager:
         return f"LIMIT {limit_int}" if limit_int != -1 else ""
 
     # criteria: gpd_capita, wine_servings,...
-    # order: "", ASC, DESC
+    # order: ASC, DESC
     # limit: none valid number
     # filter: all, gt_avg, gte_avg, lt_avg, lte_avg, eq_avg
     def rank_countries(criteria, order, limit, filter):
@@ -128,7 +128,7 @@ class JsonManager:
         if not table_name:
             return []
 
-        order_statement = f"ORDER BY {criteria} {order}" if order else "ORDER BY country_name"
+        order_statement = f"ORDER BY {criteria} {order}"
         limit_statement = JsonManager.get_limit_statement(limit)
         filter_statement = JsonManager.get_filter_statement(filter, criteria, table_name)
 
