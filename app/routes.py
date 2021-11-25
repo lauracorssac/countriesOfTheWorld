@@ -63,3 +63,29 @@ def country_info(country_name):
         area = results["area"],
         gpd = results["gpd_capita"]
     )
+
+def convertJSONToPresentation(jsonItem):
+    return {
+        'country_name': NameConverter.convert_to_display_name(jsonItem["country_name"]),
+        'country_route': jsonItem["country_name"],
+        'criteria': "{criteria: .2f}".format(criteria= jsonItem["criteria"])
+    }
+
+@app.route('/ranking/<criteria>/<order>')
+def rank_countries(criteria, order):
+    results = JsonManager.rank_countries(criteria, order, "none", "all")
+    results = map(convertJSONToPresentation, results)
+    return render_template('rank.html', countries= results)
+
+@app.route('/ranking/<criteria>/<order>/<limit>')
+def rank_and_select_countries(criteria, order, limit):
+    results = JsonManager.rank_countries(criteria, order, limit, "all")
+    results = map(convertJSONToPresentation, results)
+    return render_template('rank.html', countries= results)
+
+@app.route('/ranking/<criteria>/<order>/<limit>/<filter>')
+def rank_and_filter_countries(criteria, order, limit, filter):
+    results = JsonManager.rank_countries(criteria, order, limit, filter)
+    results = map(convertJSONToPresentation, results)
+    return render_template('rank.html', countries= results)
+        

@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+    <style>
+        td {
+            border-bottom:1px solid black;
+        }
+        .inline-block-child {
+            display: inline-block;
+        }
+    </style>
+    <head>
+        <h1> Countries </h1>
+    </head>
+    <body>
+        <table style="width:100%">
+            {% for country in countries %}
+            <tr>
+                <td>
+                    <a class='inline-block-child' href="/info/{{country.country_route}}">
+                        <h3>{{ country.country_name }}</h3>
+                    </a>
+                    <p class='inline-block-child'>
+                        {{country.criteria}}
+                    </p>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>

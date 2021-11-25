@@ -66,5 +66,78 @@ class JsonManager:
             }
         
         return result_json
+    
+    def get_filter_statement(filter, criteria):
+        
+        empty_statement = "WHERE {{criteria}} {{operator}} AVG({{criteria}})"
+        if filter == "all":
+            return ""
+        if filter == "gt_avg":
+            return empty_statement.format(criteria=criteria, operator=">")
+        if filter == "lt_avg":
+            return empty_statement.format(criteria=criteria, operator="<")
+        if filter == "gte_avg":
+            return empty_statement.format(criteria=criteria, operator=">=")
+        if filter == "lte_avg":
+            return empty_statement.format(criteria=criteria, operator="<=")
+        if filter == "eq_avg":
+            return empty_statement.format(criteria=criteria, operator="==")
+        else:
+            return ""
+
+    def get_from_statement(criteria):
+        if (criteria == "wine_servings" or 
+        criteria == "beer_servings" or 
+        criteria == "spit_servings" or 
+        criteria == "total_litres_of_pure_alcohol"):
+            return "country_drinks_info"
+        if (criteria == "gpd_capita" or 
+        criteria == "population" or 
+        criteria == "area"):
+            return "countries"
+        return ""
+
+    def get_limit_statement(limit):
+
+        limit_int = -1
+        try:
+            limit_int = int(limit)
+        except ValueError:
+            limit_int = -1
+        
+        return f"LIMIT {limit_int}" if limit_int != -1 else ""
+
+    # criteria: gpd_capita, wine_servings,...
+    # order: "", ASC, DESC
+    # limit: none valid number
+    # filter: all, gt_avg, gte_avg, lt_avg, lte_avg, eq_avg
+    def rank_countries(criteria, order, limit, filter):
+        
+        from_statement = JsonManager.get_from_statement(criteria)
+        if not from_statement:
+            return []
+
+        order_statement = f"ORDER BY {criteria} {order}" if order else "ORDER BY country_name"
+        limit_statement = JsonManager.get_limit_statement(limit)
+        filter_statement = JsonManager.get_filter_statement(filter, criteria)
+
+        query = f"""
+        SELECT country_name, {criteria} FROM {from_statement}
+        {filter_statement}
+        {order_statement}
+        {limit_statement}
+        """
+
+        results = db.engine.execute(query)
+
+        output_json = []
+        for result in results:
+            output_json.append(
+                {
+                    'country_name': result[0],
+                    'criteria': result[1]
+                }
+            )
+        return output_json
 
 
