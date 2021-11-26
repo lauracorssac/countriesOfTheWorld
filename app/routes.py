@@ -1,4 +1,5 @@
 from app import app
+from app import nav
 from flask import render_template
 from flask import request
 from app.JsonManager import JsonManager
@@ -6,6 +7,11 @@ from app.JsonManager import JsonManager
 from app.NameConverter import NameConverter
 from app.GhapicManager import GraphicManager
 from app.SelectionOptionsManager import SelectionOptionsManager
+
+nav.Bar('top', [
+    nav.Item('Countries of The World', 'countries_list'),
+    nav.Item('Correlation', 'get_correlation'),
+])
 
 @app.route('/')
 @app.route('/index')
@@ -92,9 +98,17 @@ def rank_countries():
         filters= SelectionOptionsManager.get_filters()
     )
 
-@app.route('/correlation/<criteria1>/<criteria2>')
-def get_correlation(criteria1, criteria2):
+@app.route('/correlation/')
+def get_correlation():
     
+    criteria1 = request.args.get('criteria1')
+    criteria2 = request.args.get('criteria2')
+
+    if not criteria1 or not criteria2:
+        return render_template(
+            'correlation.html', 
+            selections=SelectionOptionsManager.get_correlation_selections())
+
     results = JsonManager.get_two_criteria_all_countries(criteria1, criteria2)
     
     vector1 = []
@@ -111,6 +125,7 @@ def get_correlation(criteria1, criteria2):
 
     return render_template(
         'correlation.html', 
-        title= f"Correlation between {criteria1_title} and {criteria2_title}", 
-        image= pngImageB64String
+        selections=SelectionOptionsManager.get_correlation_selections(),
+        image= pngImageB64String,
+        title = f"Correlation between {criteria1_title} and {criteria2_title}"
     )

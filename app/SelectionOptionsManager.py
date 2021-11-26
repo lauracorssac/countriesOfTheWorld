@@ -27,3 +27,17 @@ class SelectionOptionsManager():
             {'query_name': 'lte_avg','display_name': "Less than or Equal Average"},
             {'query_name': 'eq_avg','display_name': "Equal Average"}, 
         ]
+
+    def get_correlation_selections():
+        return [
+            {
+                "name": "criteria1",
+                "display_name": "X Criteria",
+                "options": SelectionOptionsManager.get_criterias(),
+            },
+            {
+                "name": "criteria2",
+                "display_name": "Y Criteria",
+                "options": SelectionOptionsManager.get_criterias(),
+            }
+        ]

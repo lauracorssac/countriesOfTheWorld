@@ -18,6 +18,13 @@
     </style>
     <head>
         <h1> Countries of the World </h1>
+        <ul>
+            {% for item in nav.top %}
+            <li class="{{ 'active' if item.is_active else '' }}">
+                <a href="{{ item.url }}">{{ item.label }}</a>
+            </li>
+            {% endfor %}
+        </ul>
     </head>
     <body>
         <form method="GET" action="/ranking/">
