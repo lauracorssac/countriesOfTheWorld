@@ -121,6 +121,8 @@ class JsonManager:
         if criteria in drinks_columns:
             return "country_drinks_info"
 
+        if criteria in ["country_of_bean_origin", "company_location"]: 
+            return "chocolate"
         return ""
 
     # criteria: country_of_bean_origin, company_location
@@ -210,11 +212,16 @@ class JsonManager:
         if not table1 or not table2:
             return []
 
-        query = f"""
-        SELECT countries.country_name, {table1}.{criteria1}, {table2}.{criteria2} FROM country_drinks_info
-        INNER JOIN countries
-        ON countries.country_name = country_drinks_info.country_id
-        """
+        query = ""
+        if table1 == "chocolate" and table2 == "chocolate":
+            query = JsonManager.correlation_with_chololate(criteria1, criteria2)
+            print("QUEEEERYYYY", query)
+        else:
+            query = f"""
+            SELECT countries.country_name, {table1}.{criteria1}, {table2}.{criteria2} FROM country_drinks_info
+            INNER JOIN countries
+            ON countries.country_name = country_drinks_info.country_id
+            """
 
         results = db.engine.execute(query)
         output_json = []
@@ -228,4 +235,29 @@ class JsonManager:
             )
         return output_json
 
+    def create_view(criteria_country, view_name):
+        query= f"""
+        DROP VIEW IF EXISTS {view_name};
+        CREATE VIEW {view_name} AS
+        SELECT {criteria_country} AS country_name, AVG(rating) AS avg_rating
+        FROM chocolate
+        GROUP BY {criteria_country};
+        """
+        return query
+
+    def correlation_with_chololate(criteria1, criteria2):
+        
+        query = JsonManager.create_view(criteria1, "view1")
+        query += JsonManager.create_view(criteria2, "view2")
+
+        query += """
+            SELECT view1.country_name, view1.avg_rating, view2.avg_rating FROM view1
+            INNER JOIN view2
+            ON view1.country_name = view2.country_name
+            """
+        return query
+
+
+    
+    
 
