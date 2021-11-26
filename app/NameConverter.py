@@ -16,7 +16,15 @@ class NameConverter:
         countryName = re.sub("^st[.]? ", "saint ", countryName)
         countryName = re.sub("&", "and", countryName)
         countryName = re.sub("-", "_", countryName)
-        countryName = re.sub("^usa$", "united states", countryName)
+        countryName = re.sub("^u[.]?s[.]?a[.]?$", "united states", countryName)
+        countryName = re.sub("^u.a.e[.]?$", "united arab emirates", countryName)
+        countryName = re.sub("^u.k[.]?$", "united kingdom", countryName)
+        countryName = re.sub("^congo$", "republic congo", countryName)
+        countryName = re.sub("^sao tome$", "sao tome and principe", countryName)
+        countryName = re.sub("^principe$", "sao tome and principe", countryName)
+        countryName = re.sub("^tobago$", "trinidad and tobago", countryName)
+        countryName = re.sub("^trinidad$", "trinidad and tobago", countryName)
+        countryName = re.sub("^ivory coast$", "cote d'ivoire", countryName)
 
         output = ""
         components = re.split(",", countryName)

@@ -1,4 +1,3 @@
-
 class SelectionOptionsManager():
 
     def get_criterias():
@@ -9,7 +8,9 @@ class SelectionOptionsManager():
             {'query_name': 'total_litres_of_pure_alcohol','display_name': "Total Alcohol"},
             {'query_name': 'gpd_capita', 'display_name': "GPD"},
             {'query_name': 'population', 'display_name': 'Population'},
-            {'query_name': 'area','display_name': "Area"}
+            {'query_name': 'area','display_name': "Area"},
+            {'query_name': 'country_of_bean_origin','display_name': "Average Rating Chocolate Produced"},
+            {'query_name': 'company_location','display_name': "Average Rating Chocolate Sold"},
         ]
 
     def get_orders():

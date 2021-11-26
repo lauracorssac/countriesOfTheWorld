@@ -1,9 +1,9 @@
 from app import db
-from app.models import CountryDrinksInfo, Countries
+from app.models import Chocolate, CountryDrinksInfo, Countries
 import csv
 from app.NameConverter import NameConverter
 from sqlalchemy import exc
-
+from copy import deepcopy
 
 def insert_drinks():
 
@@ -76,5 +76,52 @@ def insert_countries():
         db.session.add(country)
         db.session.commit()
 
-insert_countries()
-insert_drinks()
+def get_chocolate_no_foreign_key(chocolate):
+    return Chocolate(
+        id = chocolate.id,
+        company_location = chocolate.company_location,
+        country_of_bean_origin = chocolate.country_of_bean_origin,
+        cocoa_percent = chocolate.cocoa_percent,
+        rating = chocolate.rating,
+        country_of_bean_origin_id = None,
+        company_location_id = None
+
+    )
+
+def insert_chocolate():
+
+    infos = []
+    with open("data/chocolate.csv", 'r') as file:
+        csvreader = csv.reader(file)
+        header = next(csvreader)
+        for row in csvreader:
+            info = Chocolate(
+                id = row[0],
+                company_location = NameConverter.convert_country_name(row[3]),
+                country_of_bean_origin = NameConverter.convert_country_name(row[5]),
+                cocoa_percent = row[7],
+                rating = row[8],
+                country_of_bean_origin_id = NameConverter.convert_country_name(row[5]),
+                company_location_id = NameConverter.convert_country_name(row[3])
+            )
+            infos.append(info)
+
+    for info in infos:
+
+        new_info = deepcopy(info)
+
+        if new_info.country_of_bean_origin == 'blend':
+            continue
+
+        if db.session.query(Countries.country_name).filter_by(country_name=info.company_location_id).count() == 0:
+            new_info.company_location_id = None
+        if db.session.query(Countries.country_name).filter_by(country_name=info.country_of_bean_origin_id).count() == 0:
+            new_info.country_of_bean_origin_id = None
+
+        db.session.add(new_info)
+        db.session.commit()
+
+Chocolate.query.delete()
+insert_chocolate()
+#insert_countries()
+#insert_drinks()

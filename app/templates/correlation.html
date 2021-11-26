@@ -1,24 +1,24 @@
-
 {% extends "base.html" %}
 {% block content %}
-<h2>{{title}}</h2>
-<div class="container">
-    <div class="selection-menu">
-        <form method="GET" action="/correlation/">
-            {% for selection in selections %}
-            <label> {{selection.display_name}} </label>
-            <select class="inline-block-child" name= {{selection.name}}>
-                {% for option in selection.options %}
-                    <option value="{{option.query_name}}">{{option.display_name}}</option>
-                {% endfor %}
-            </select>
+<div class="selection-menu">
+<form method="GET" action="/correlation/">
+   
+        {% for selection in selections %}
+        <label> {{selection.display_name}} </label>
+        <select class="inline-block-child" name= {{selection.name}}>
+            {% for option in selection.options %}
+                <option value="{{option.query_name}}">{{option.display_name}}</option>
             {% endfor %}
-            <input class="inline-block-child" type="submit">
-        </form> 
-    </div>
+        </select>
+        {% endfor %}
+        <input class="inline-block-child" type="submit"> 
+</form> 
 </div>
+{% if title %}
+<h2>{{title}}</h2>
+{% endif %}
 {% if image %}
-<img class="center" src={{image}} height="50%" width="50%">
+<img class="center" src={{image}}>
 {% endif %}
 {% endblock %}
 

@@ -9,7 +9,7 @@
         a {
             color: black;
         }
-        h1 {
+        h1, h2 {
             text-align: center;
         }
         td, .nav-bar {
@@ -17,14 +17,24 @@
         }
         .selection-menu {
             margin:auto;
+            background-color: burlywood;
+            height: 40px;
+            width: 100%;
+            padding-top: 20px;
+            padding-left: 20px;
+            margin-right: 10px;
+          
         }
-        .container {
-            width: max-content;
+        .center {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 50%;
         }
     </style>
     <head>
         <div class= "nav-bar">
-            <h1 class= "inline-block-child" action="/list"> Countries of the World </h1>
+            <h1 class= "inline-block-child"> Countries of the World </h1>
             {% for item in nav.top %}
             <label class= "inline-block-child">
                 <a href="{{ item.url }}">{{ item.label }}</a>

@@ -1,24 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
-<form method="GET" action="/ranking/">
-    
-    <div class="selection-menu">
-        <form method="GET" action="/correlation/">
-            {% for selection in selections %}
-            <label> {{selection.display_name}} </label>
-            <select class="inline-block-child" name= {{selection.name}}>
-                {% for option in selection.options %}
-                    <option value="{{option.query_name}}">{{option.display_name}}</option>
-                {% endfor %}
-            </select>
+<div class="selection-menu">
+    <form method="GET" action="/ranking/">
+        {% for selection in selections %}
+        <label> {{selection.display_name}} </label>
+        <select class="inline-block-child" name= {{selection.name}}>
+            {% for option in selection.options %}
+                <option value="{{option.query_name}}">{{option.display_name}}</option>
             {% endfor %}
-            <label class="inline-block-child" for="limit">Show Only:</label>
-            <input class="inline-block-child" id="limit" type="text" name="limit">
-            <input class="inline-block-child" type="submit">
-        </form> 
-    </div>
-    
-</form> 
+        </select>
+        {% endfor %}
+        <label class="inline-block-child" for="limit">Show Only:</label>
+        <input class="inline-block-child" id="limit" type="text" name="limit">
+        <input class="inline-block-child" type="submit">
+    </form> 
+</div>
 <table style="width:100%">
     {% for country in countries %}
     <tr>

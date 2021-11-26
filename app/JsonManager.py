@@ -3,6 +3,7 @@ from app.models import Countries, CountryDrinksInfo
 import json
 from app.NameConverter import NameConverter
 from app import db
+from sqlalchemy.inspection import inspect
 #from app.AlcoholType import AlcoholType
 
 # class that does all queries and transforms to json
@@ -48,6 +49,20 @@ class JsonManager:
             'alcohol_area': alcohol_area
             }
         return result_json
+
+    
+    # get columns that country_name is in the top X when listing in descending order
+    def get_categories_top_X(country_name, limiar):
+        query = f"""
+        SELECT row_number FROM (
+            SELECT ROW_NUMBER() OVER(ORDER BY * DESC), country_name FROM country_drinks_info
+            LIMIT {limiar}
+        ) 
+        WHERE {country_name} IN 
+        
+        
+        """
+
 
     def get_info(country_name):
         query = f"""
@@ -97,16 +112,52 @@ class JsonManager:
             return ""
 
     def get_table_name(criteria):
-        if (criteria == "wine_servings" or 
-        criteria == "beer_servings" or 
-        criteria == "spirit_servings" or 
-        criteria == "total_litres_of_pure_alcohol"):
-            return "country_drinks_info"
-        if (criteria == "gpd_capita" or 
-        criteria == "population" or 
-        criteria == "area"):
+
+        countries_columns = [column.name for column in inspect(Countries).c]
+        if criteria in countries_columns:
             return "countries"
+
+        drinks_columns = [column.name for column in inspect(CountryDrinksInfo).c]
+        if criteria in drinks_columns:
+            return drinks_columns
+
         return ""
+
+    # criteria: country_of_bean_origin, company_location
+    # order: ASC, DESC
+    # limit: none valid number
+    # filter: all, gt_avg, gte_avg, lt_avg, lte_avg, eq_avg
+    def rank_avg_rating_choco(criteria, order, limit, filter):
+
+        order_statement = f"ORDER BY AVG(rating) {order}"
+        limit_statement = JsonManager.get_limit_statement(limit)
+        filter_statement = JsonManager.get_filter_statement(filter, "avg_score", "chocolate")
+
+        query= f"""
+        DROP VIEW IF EXISTS sub_view;
+        CREATE VIEW sub_view AS
+        SELECT {criteria}, AVG(rating) AS avg_score
+        FROM chocolate
+        GROUP BY {criteria}
+        {filter_statement}
+        {order_statement}
+        {limit_statement};
+        SELECT ROW_NUMBER() OVER(), {criteria}, avg_score FROM sub_view;
+        """
+
+        results = db.engine.execute(query)
+
+        output_json = []
+        for result in results:
+            output_json.append(
+                {
+                    'order_index': result[0],
+                    'country_name': result[1],
+                    'criteria': result[2]
+                }
+            )
+        return output_json
+
 
     def get_limit_statement(limit):
 
@@ -133,7 +184,7 @@ class JsonManager:
         filter_statement = JsonManager.get_filter_statement(filter, criteria, table_name)
 
         query = f"""
-        SELECT ROW_NUMBER() OVER(ORDER BY {criteria} {order}), country_name, {criteria} FROM {table_name}
+        SELECT ROW_NUMBER() OVER(), country_name, {criteria} FROM {table_name}
         {filter_statement}
         {order_statement}
         {limit_statement}

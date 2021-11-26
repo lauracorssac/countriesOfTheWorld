@@ -67,13 +67,9 @@ def convertJSONToPresentation(jsonItem):
     }
 
 @app.route('/ranking/')
-# @app.route('/ranking/<criteria>/', defaults={'order':'ASC', 'limit': "none", 'filter': 'all'})
-# @app.route('/ranking/<criteria>/<order>', defaults={'limit': "none", 'filter': 'all'})
-# @app.route('/ranking/<criteria>/<order>/<limit>', defaults={'filter': "all"})
-# @app.route('/ranking/<criteria>/<order>/<limit>/<filter>')
 def rank_countries():
 
-    criteria_arg = request.args.get('chosen_criteria')
+    criteria_arg = request.args.get('criteria')
     order_arg = request.args.get('order')
     limit_arg = request.args.get('limit')
     filter_arg = request.args.get('filter')
@@ -86,14 +82,17 @@ def rank_countries():
     filter = filter_arg if filter_arg is not None else "all"
     limit = limit_arg if limit_arg is not None else "none"
 
-    results = JsonManager.rank_countries(criteria, order, limit, filter)
+    results = []
+    if criteria_arg in ["country_of_bean_origin", "company_location"]: 
+        results = JsonManager.rank_avg_rating_choco(criteria, order, limit, filter)
+    else:
+        results = JsonManager.rank_countries(criteria, order, limit, filter)
+        
     results = map(convertJSONToPresentation, results)
     return render_template(
         'rank.html', 
         countries= results,
-        criterias= SelectionOptionsManager.get_criterias(),
-        orders= SelectionOptionsManager.get_options(),
-        filters= SelectionOptionsManager.get_filters()
+        selections=SelectionOptionsManager.get_ranking_selections()
     )
 
 @app.route('/correlation/')
