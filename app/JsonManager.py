@@ -259,19 +259,6 @@ class JsonManager:
         """
         return query
 
-    # def correlation_with_chololate(criteria1, criteria2):
-        
-    #     query = JsonManager.create_view(criteria1, "view1")
-    #     query += JsonManager.create_view(criteria2, "view2")
-
-    #     query += """
-    #         SELECT view1.country_name, view1.avg_rating, view2.avg_rating FROM view1
-    #         INNER JOIN view2
-    #         ON view1.country_name = view2.country_name
-    #         """
-    #     return query
-
-
     
     
 
