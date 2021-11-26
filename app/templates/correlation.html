@@ -1,31 +1,9 @@
-<!doctype html>
-<html>
-    <style>
-        .center {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            width: 50%;
-        }
-        body {
-            text-align: center;
-        }
-        .inline-block-child {
-            display: inline;
-        }
-    </style>
-    <head>
-        <h1> Countries of the World </h1>
-        <ul>
-            {% for item in nav.top %}
-            <li class="{{ 'active' if item.is_active else '' }}">
-                <a href="{{ item.url }}">{{ item.label }}</a>
-            </li>
-            {% endfor %}
-        </ul>
-    </head>
-    <body>
-        <h2>{{title}}</h2>
+
+{% extends "base.html" %}
+{% block content %}
+<h2>{{title}}</h2>
+<div class="container">
+    <div class="selection-menu">
         <form method="GET" action="/correlation/">
             {% for selection in selections %}
             <label> {{selection.display_name}} </label>
@@ -37,7 +15,11 @@
             {% endfor %}
             <input class="inline-block-child" type="submit">
         </form> 
-        <img class="center" src={{image}} height="50%" width="50%">
-    </body>
-</html>
+    </div>
+</div>
+{% if image %}
+<img class="center" src={{image}} height="50%" width="50%">
+{% endif %}
+{% endblock %}
+
 

@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+    <style>
+        .inline-block-child {
+            display: inline-block;
+            margin-left: 20px;
+            margin-right: 10px;
+        }
+        a {
+            color: black;
+        }
+        h1 {
+            text-align: center;
+        }
+        td, .nav-bar {
+            border-bottom:1px solid black;
+        }
+        .selection-menu {
+            margin:auto;
+        }
+        .container {
+            width: max-content;
+        }
+    </style>
+    <head>
+        <div class= "nav-bar">
+            <h1 class= "inline-block-child" action="/list"> Countries of the World </h1>
+            {% for item in nav.top %}
+            <label class= "inline-block-child">
+                <a href="{{ item.url }}">{{ item.label }}</a>
+            </label>
+            {% endfor %}
+        </div>
+    </head>
+    <body>
+        {% block content %}{% endblock %}
+    </body>
+</html>

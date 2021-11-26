@@ -9,7 +9,7 @@ from app.GhapicManager import GraphicManager
 from app.SelectionOptionsManager import SelectionOptionsManager
 
 nav.Bar('top', [
-    nav.Item('Countries of The World', 'countries_list'),
+    nav.Item('Home', 'countries_list'),
     nav.Item('Correlation', 'get_correlation'),
 ])
 
@@ -23,9 +23,7 @@ def countries_list():
     return render_template(
         'rank.html', 
         countries=map(convertJSONToPresentation,countries), 
-        criterias= SelectionOptionsManager.get_criterias(),
-        orders= SelectionOptionsManager.get_options(),
-        filters= SelectionOptionsManager.get_filters()
+        selections=SelectionOptionsManager.get_ranking_selections()
     )
 
 @app.route('/alcohol_area/<country_name>/<alcohol_type>')

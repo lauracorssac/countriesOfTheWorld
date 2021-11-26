@@ -12,7 +12,7 @@ class SelectionOptionsManager():
             {'query_name': 'area','display_name': "Area"}
         ]
 
-    def get_options():
+    def get_orders():
         return [
             {'query_name': 'ASC','display_name': "Ascending"}, 
             {'query_name': 'DESC','display_name': "Descending"}
@@ -39,5 +39,26 @@ class SelectionOptionsManager():
                 "name": "criteria2",
                 "display_name": "Y Criteria",
                 "options": SelectionOptionsManager.get_criterias(),
+            }
+        ]
+    
+    def get_ranking_selections():
+        filters= SelectionOptionsManager.get_filters()
+
+        return [
+            {
+                "name": "criteria",
+                "display_name": "Criteria",
+                "options": SelectionOptionsManager.get_criterias(),
+            },
+            {
+                "name": "order",
+                "display_name": "Order",
+                "options": SelectionOptionsManager.get_orders(),
+            },
+            {
+                "name": "filter",
+                "display_name": "Filter",
+                "options": SelectionOptionsManager.get_filters(),
             }
         ]
