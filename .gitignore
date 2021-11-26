@@ -165,3 +165,7 @@ cython_debug/
 
 # DS_Store
 .DS_Store
+
+# venv
+
+.countries_venv/*
