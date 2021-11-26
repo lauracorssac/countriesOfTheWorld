@@ -122,6 +122,8 @@ def insert_chocolate():
         db.session.commit()
 
 Chocolate.query.delete()
+Countries.query.delete()
+CountryDrinksInfo.query.delete()
 insert_chocolate()
-#insert_countries()
-#insert_drinks()
+insert_countries()
+insert_drinks()
