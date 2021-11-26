@@ -213,15 +213,29 @@ class JsonManager:
             return []
 
         query = ""
-        if table1 == "chocolate" and table2 == "chocolate":
-            query = JsonManager.correlation_with_chololate(criteria1, criteria2)
-            print("QUEEEERYYYY", query)
+        if table1 == "chocolate":
+            query += JsonManager.create_view(criteria1, "view1") 
+            table1 = "view1"
+            criteria1 = "avg_rating"
+        if table2 == "chocolate":
+            query += JsonManager.create_view(criteria2, "view2") 
+            table2 = "view2"
+            criteria2 = "avg_rating"
+
+        from_statement = ""
+        if table1 == table2:
+            from_statement = f"{table1}"
         else:
-            query = f"""
-            SELECT countries.country_name, {table1}.{criteria1}, {table2}.{criteria2} FROM country_drinks_info
-            INNER JOIN countries
-            ON countries.country_name = country_drinks_info.country_id
+            from_statement = f"""
+            {table1}
+            INNER JOIN {table2}
+            ON {table1}.country_name = {table2}.country_name
             """
+        
+        query += f"""
+        SELECT {table1}.country_name, {table1}.{criteria1}, {table2}.{criteria2} 
+        FROM {from_statement}
+        """
 
         results = db.engine.execute(query)
         output_json = []
@@ -245,17 +259,17 @@ class JsonManager:
         """
         return query
 
-    def correlation_with_chololate(criteria1, criteria2):
+    # def correlation_with_chololate(criteria1, criteria2):
         
-        query = JsonManager.create_view(criteria1, "view1")
-        query += JsonManager.create_view(criteria2, "view2")
+    #     query = JsonManager.create_view(criteria1, "view1")
+    #     query += JsonManager.create_view(criteria2, "view2")
 
-        query += """
-            SELECT view1.country_name, view1.avg_rating, view2.avg_rating FROM view1
-            INNER JOIN view2
-            ON view1.country_name = view2.country_name
-            """
-        return query
+    #     query += """
+    #         SELECT view1.country_name, view1.avg_rating, view2.avg_rating FROM view1
+    #         INNER JOIN view2
+    #         ON view1.country_name = view2.country_name
+    #         """
+    #     return query
 
 
     
