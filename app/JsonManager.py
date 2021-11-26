@@ -119,7 +119,7 @@ class JsonManager:
 
         drinks_columns = [column.name for column in inspect(CountryDrinksInfo).c]
         if criteria in drinks_columns:
-            return drinks_columns
+            return "country_drinks_info"
 
         return ""
 
