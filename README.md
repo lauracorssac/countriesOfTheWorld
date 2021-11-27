@@ -5,22 +5,18 @@ It consists on a website to analize data from csv that provides us with differen
 
 ## ⚙️ How to install
 
-<details>
-  <summary> <b> 🍎 macOS </b> </summary>
-
 #### - Clone this repository and open the folder on terminal
   
 #### - Install PostgresSQL
-
-`$ brew install postgresql`
+- On mac: `$ brew install postgresql`
 
 #### - Start PostgresSQL
-
-`$ brew services start postgresql`
+- On mac: `$ brew services start postgresql`
  
 #### - Create a database on PostgresSQL named "countries"
 
-`$ /usr/local/opt/postgres/bin/createdb countries -p 5432 -h localhost`
+- `$ /usr/local/opt/postgres/bin/createdb countries -p 5432 -h localhost`
+- Or, open a Postgres client (such as Postbird) and create using the platform
 
 #### - Create a username on PostgresSQL named "postgres"
 
@@ -37,24 +33,22 @@ It consists on a website to analize data from csv that provides us with differen
 `(countries_venv)$ pip install -r requirements.txt`
   
 #### - Tell flask how to import project
-  `(countries_venv)$ export FLASK_APP=microblog.py`
+  `(countries_venv)$ export FLASK_APP=countries.py`
 
-#### 9. Start flask's database
+#### - Start flask's database
 
 `(countries_venv)$ flask db init`
   
-#### 10. Create columns on database (located on `app/models.py`)
+#### - Create columns on database (located on `app/models.py`)
 
 `(countries_venv)$ flask db migrate`
 
-#### 11. Updates Postgres with records 
+#### - Updates Postgres with records 
 
 `(countries_venv)$ flask db upgrade`
 
-#### 12. Insert all values on database
+#### - Insert all values on database
   `(countries_venv)$ python insert.py`
-
-</details>
 
 
 ## 🏃‍♀️ How to run
@@ -70,5 +64,5 @@ http://127.0.0.1:5000/
 Obs.: every time you are open a new terminal window, you should also run these two steps, also on the root of this repository:
 
 - `$ source nba_env/bin/activate`
-- `(countries_venv)$ export FLASK_APP=microblog.py`
+- `(countries_venv)$ export FLASK_APP=countries.py`
 
