@@ -49,13 +49,13 @@ def country_info(country_name):
     return render_template(
         'country_info.html',
         country_name= country_display_name,
-        beer = results["beer_servings"],
-        spirit = results["spirit_servings"],
-        wine = results["wine_servings"],
-        total = results["total_litres_of_pure_alcohol"],
-        population=results["population"], 
-        area = results["area"],
-        gpd = results["gpd_capita"]
+        beer = results["beer_servings"] if results["beer_servings"] else "Undefined",
+        spirit = results["spirit_servings"] if results["spirit_servings"] else "Undefined",
+        wine = results["wine_servings"] if results["wine_servings"] else "Undefined",
+        total = results["total_litres_of_pure_alcohol"] if results["total_litres_of_pure_alcohol"] else "Undefined",
+        population=results["population"] if results["population"] else "Undefined", 
+        area = results["area"] if results["area"] else "Undefined",
+        gpd = results["gpd_capita"] if results["gpd_capita"] else "Undefined"
     )
 
 def convertJSONToPresentation(jsonItem):
@@ -87,7 +87,7 @@ def rank_countries():
         results = JsonManager.rank_avg_rating_choco(criteria, order, limit, filter)
     else:
         results = JsonManager.rank_countries(criteria, order, limit, filter)
-        
+
     results = map(convertJSONToPresentation, results)
     return render_template(
         'rank.html', 

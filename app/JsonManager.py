@@ -66,16 +66,18 @@ class JsonManager:
 
     def get_info(country_name):
         query = f"""
-        SELECT country_drinks_info.country_name, \
-            country_drinks_info.beer_servings, \
-            country_drinks_info.spirit_servings, \
-            country_drinks_info.wine_servings, \
-            country_drinks_info.total_litres_of_pure_alcohol, \
-            countries.population, countries.area, countries.gpd_capita \
-        FROM country_drinks_info
-        INNER JOIN countries
-        ON country_drinks_info.country_id = countries.country_name
-        WHERE country_drinks_info.country_name = '{country_name}'
+        SELECT countries.country_name, \
+            beer_servings, \
+            spirit_servings, \
+            wine_servings, \
+            total_litres_of_pure_alcohol, \
+            population, \
+            area, \
+            gpd_capita \
+            FROM country_drinks_info
+        FULL OUTER JOIN countries
+        ON country_drinks_info.country_name = countries.country_name
+        WHERE countries.country_name = '{country_name}' OR country_drinks_info.country_name = '{country_name}'
         """
 
         result = db.engine.execute(query).first()
