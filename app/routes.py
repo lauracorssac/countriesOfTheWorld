@@ -78,7 +78,7 @@ def rank_countries():
         return
 
     criteria = criteria_arg
-    order = order_arg if order_arg is not None else "ASC"
+    order = order_arg if order_arg is not None else "DESC"
     filter = filter_arg if filter_arg is not None else "all"
     limit = limit_arg if limit_arg is not None else "none"
 

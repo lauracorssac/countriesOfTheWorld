@@ -93,6 +93,8 @@ class JsonManager:
             'gpd_capita': result[7]
             }
         
+        print(query)
+
         return result_json
     
     def get_filter_statement(filter, criteria, table):
@@ -149,6 +151,8 @@ class JsonManager:
         SELECT ROW_NUMBER() OVER(), {criteria}, avg_score FROM sub_view;
         """
 
+        print(query)
+
         results = db.engine.execute(query)
 
         output_json = []
@@ -188,11 +192,13 @@ class JsonManager:
         filter_statement = JsonManager.get_filter_statement(filter, criteria, table_name)
 
         query = f"""
-        SELECT ROW_NUMBER() OVER(), country_name, {criteria} FROM {table_name}
+        SELECT ROW_NUMBER() OVER({order_statement}), country_name, {criteria} FROM {table_name}
         {filter_statement}
         {order_statement}
         {limit_statement}
         """
+
+        print(query)
 
         results = db.engine.execute(query)
 
@@ -238,6 +244,8 @@ class JsonManager:
         SELECT {table1}.country_name, {table1}.{criteria1}, {table2}.{criteria2} 
         FROM {from_statement}
         """
+
+        print(query)
 
         results = db.engine.execute(query)
         output_json = []
