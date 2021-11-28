@@ -115,6 +115,9 @@ def get_correlation():
         vector1.append(result["criteria1"])
         vector2.append(result["criteria2"])
 
+    print(vector1, len(vector1))
+    print(vector2, len(vector2))
+
     image_url = f"/app/images/correlation_{criteria1}_{criteria2}.png"
     pngImageB64String = GraphicManager.correlate(vector1, vector2, image_url, criteria1, criteria2)
     criteria1_title = NameConverter.convert_to_display_name(criteria1)

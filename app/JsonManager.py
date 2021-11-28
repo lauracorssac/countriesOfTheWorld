@@ -236,7 +236,7 @@ class JsonManager:
         else:
             from_statement = f"""
             {table1}
-            INNER JOIN {table2}
+            FULL OUTER JOIN {table2}
             ON {table1}.country_name = {table2}.country_name
             """
         
@@ -253,8 +253,8 @@ class JsonManager:
             output_json.append(
                 {
                     'country_name': result[0],
-                    'criteria1': result[1],
-                    'criteria2': result[2]
+                    'criteria1': result[1] if result[1] else 0,
+                    'criteria2': result[2] if result[2] else 0
                 }
             )
         return output_json
