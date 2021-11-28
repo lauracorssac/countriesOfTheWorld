@@ -220,6 +220,8 @@ class JsonManager:
         if not table1 or not table2:
             return []
 
+        both_tables_chocolate = (table1 == "chocolate" and table2 == "chocolate")
+
         query = ""
         if table1 == "chocolate":
             query += JsonManager.create_view(criteria1, "view1") 
@@ -230,13 +232,15 @@ class JsonManager:
             table2 = "view2"
             criteria2 = "avg_rating"
 
+        join_type = "FULL OUTER" if both_tables_chocolate else "INNER"
+
         from_statement = ""
         if table1 == table2:
             from_statement = f"{table1}"
         else:
             from_statement = f"""
             {table1}
-            FULL OUTER JOIN {table2}
+            {join_type} JOIN {table2}
             ON {table1}.country_name = {table2}.country_name
             """
         
